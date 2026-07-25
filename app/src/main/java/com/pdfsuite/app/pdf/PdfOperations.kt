@@ -2,6 +2,7 @@ package com.pdfsuite.app.pdf
 
 import android.content.Context
 import android.net.Uri
+import java.io.InputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.pdfbox.io.MemoryUsageSetting
@@ -21,16 +22,24 @@ object PdfOperations {
 
             val resolver = context.contentResolver
             val merger = PDFMergerUtility()
+            // addSource() only registers the stream; PDFMergerUtility never closes the
+            // caller-supplied InputStreams itself, so we must track and close them ourselves.
+            val openedStreams = mutableListOf<InputStream>()
 
-            resolver.openOutputStream(destination)?.use { output ->
-                merger.destinationStream = output
-                sources.forEach { uri ->
-                    val input = resolver.openInputStream(uri)
-                        ?: error("Could not open $uri")
-                    merger.addSource(input)
-                }
-                merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly())
-            } ?: error("Could not open destination $destination")
+            try {
+                resolver.openOutputStream(destination)?.use { output ->
+                    merger.destinationStream = output
+                    sources.forEach { uri ->
+                        val input = resolver.openInputStream(uri)
+                            ?: error("Could not open $uri")
+                        openedStreams += input
+                        merger.addSource(input)
+                    }
+                    merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly())
+                } ?: error("Could not open destination $destination")
+            } finally {
+                openedStreams.forEach { it.close() }
+            }
         }
     }
 

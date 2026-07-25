@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CallMerge
 import androidx.compose.material.icons.filled.CallSplit
 import androidx.compose.material.icons.filled.MenuBook
-import androidx.compose.material.icons.filled.Merge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -51,7 +51,7 @@ fun HomeScreen(
         HomeAction(
             title = stringResource(R.string.home_action_merge),
             description = stringResource(R.string.home_action_merge_desc),
-            icon = Icons.Filled.Merge,
+            icon = Icons.Filled.CallMerge,
             onClick = onOpenMerge,
         ),
         HomeAction(
