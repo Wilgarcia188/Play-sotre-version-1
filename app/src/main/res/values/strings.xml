@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">PDF Suite</string>
+
+    <string name="home_title">PDF Suite</string>
+    <string name="home_subtitle">Visor, unir y separar PDFs, sin subirlos a ningún lado</string>
+    <string name="home_action_view">Ver PDF</string>
+    <string name="home_action_view_desc">Abrir y leer un documento</string>
+    <string name="home_action_merge">Unir PDFs</string>
+    <string name="home_action_merge_desc">Combinar varios archivos en uno</string>
+    <string name="home_action_split">Separar / extraer páginas</string>
+    <string name="home_action_split_desc">Elegí páginas y exportá un PDF nuevo</string>
+
+    <string name="viewer_title">Visor</string>
+    <string name="viewer_pick_file">Elegir PDF</string>
+    <string name="viewer_page_of">Página %1$d de %2$d</string>
+    <string name="viewer_empty">Elegí un PDF para verlo</string>
+    <string name="viewer_error">No se pudo abrir el PDF</string>
+
+    <string name="merge_title">Unir PDFs</string>
+    <string name="merge_add_files">Agregar PDFs</string>
+    <string name="merge_empty">Agregá dos o más PDFs para unirlos</string>
+    <string name="merge_action">Unir y guardar</string>
+    <string name="merge_move_up">Subir</string>
+    <string name="merge_move_down">Bajar</string>
+    <string name="merge_remove">Quitar</string>
+    <string name="merge_success">PDF combinado guardado correctamente</string>
+    <string name="merge_error">No se pudo unir los PDFs</string>
+    <string name="merge_need_two">Agregá al menos dos archivos</string>
+
+    <string name="split_title">Separar / extraer páginas</string>
+    <string name="split_pick_file">Elegir PDF</string>
+    <string name="split_empty">Elegí un PDF para ver sus páginas</string>
+    <string name="split_select_all">Seleccionar todas</string>
+    <string name="split_clear">Ninguna</string>
+    <string name="split_extract_selected">Extraer seleccionadas</string>
+    <string name="split_export_rest">Exportar el resto (eliminar seleccionadas)</string>
+    <string name="split_success">PDF exportado correctamente</string>
+    <string name="split_error">No se pudo procesar el PDF</string>
+    <string name="split_need_one">Seleccioná al menos una página</string>
+
+    <string name="action_back">Volver</string>
+    <string name="action_save">Guardar</string>
+    <string name="loading">Procesando…</string>
+</resources>
