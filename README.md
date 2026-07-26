@@ -10,6 +10,7 @@ App Android nativa (Kotlin + Jetpack Compose) para trabajar con PDFs **en el dis
 - **Reconocer texto (OCR)**: extrae el texto de un PDF escaneado página por página, 100% en el dispositivo (sin conexión). El texto se puede copiar o guardar como `.txt`.
 - **Comprimir PDF**: recomprime cada página como JPEG (alta calidad / equilibrado / máxima compresión) para reducir el tamaño de PDFs escaneados o con muchas imágenes. Muestra el tamaño original y el final.
 - **Convertir imagen ↔ PDF**: armá un PDF a partir de una o más fotos, o exportá las páginas de un PDF como imágenes JPEG a una carpeta elegida.
+- **Marca de agua**: agrega un texto diagonal semitransparente a todas las páginas, preservando el contenido original del PDF (no lo rasteriza).
 
 Todo el acceso a archivos usa el selector del sistema (Storage Access Framework), así que la app no pide permisos de almacenamiento.
 
@@ -17,7 +18,7 @@ Todo el acceso a archivos usa el selector del sistema (Storage Access Framework)
 
 - Kotlin + Jetpack Compose (Material 3)
 - Navigation Compose
-- [`PdfBox-Android`](https://github.com/TomRoush/PdfBox-Android) para unir/separar páginas, comprimir y convertir imagen↔PDF
+- [`PdfBox-Android`](https://github.com/TomRoush/PdfBox-Android) para unir/separar páginas, comprimir, convertir imagen↔PDF y marca de agua
 - `android.graphics.pdf.PdfRenderer` (nativo de Android) para el visor y las miniaturas
 - [`ML Kit Text Recognition`](https://developers.google.com/ml-kit/vision/text-recognition) (modelo incluido en la app) para el OCR
 
@@ -33,4 +34,4 @@ Requisitos: minSdk 24 (Android 7.0), compileSdk/targetSdk 34.
 
 ## Próximos pasos sugeridos
 
-- Anotaciones (resaltar, texto, firma) y marca de agua.
+- Anotaciones a mano alzada (resaltar, dibujar, texto libre posicionable) y firma.

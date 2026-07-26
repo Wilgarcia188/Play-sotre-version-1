@@ -15,6 +15,8 @@
     <string name="home_action_compress_desc">Reducí el tamaño de un PDF con imágenes o escaneado</string>
     <string name="home_action_convert">Convertir imagen ↔ PDF</string>
     <string name="home_action_convert_desc">Creá un PDF desde fotos o exportá páginas como imágenes</string>
+    <string name="home_action_watermark">Marca de agua</string>
+    <string name="home_action_watermark_desc">Agregá un texto diagonal a todas las páginas</string>
 
     <string name="viewer_title">Visor</string>
     <string name="viewer_pick_file">Elegir PDF</string>
@@ -82,6 +84,19 @@
     <string name="convert_export_progress">Exportando página %1$d de %2$d</string>
     <string name="convert_export_success">Páginas exportadas correctamente</string>
     <string name="convert_export_error">No se pudieron exportar las páginas</string>
+
+    <string name="watermark_title">Marca de agua</string>
+    <string name="watermark_pick_file">Elegir PDF</string>
+    <string name="watermark_empty">Elegí un PDF para agregarle una marca de agua</string>
+    <string name="watermark_text_label">Texto de la marca de agua</string>
+    <string name="watermark_opacity_label">Intensidad</string>
+    <string name="watermark_opacity_subtle">Sutil</string>
+    <string name="watermark_opacity_medium">Media</string>
+    <string name="watermark_opacity_strong">Fuerte</string>
+    <string name="watermark_action">Aplicar y guardar</string>
+    <string name="watermark_success">Marca de agua aplicada correctamente</string>
+    <string name="watermark_error">No se pudo aplicar la marca de agua</string>
+    <string name="watermark_need_text">Escribí el texto de la marca de agua</string>
 
     <string name="action_back">Volver</string>
     <string name="action_save">Guardar</string>
