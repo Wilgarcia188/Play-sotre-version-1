@@ -48,6 +48,7 @@ object AnnotateOperations {
                                     is PageAnnotation.Stroke -> drawStroke(stream, annotation, pageWidth, pageHeight)
                                     is PageAnnotation.TextNote -> drawText(stream, annotation, pageWidth, pageHeight)
                                     is PageAnnotation.Signature -> drawSignature(doc, stream, annotation, pageWidth, pageHeight)
+                                    is PageAnnotation.TextReplacement -> drawTextReplacement(stream, annotation)
                                 }
                             }
                         }
@@ -121,5 +122,35 @@ object AnnotateOperations {
         val x = signature.position.x * pageWidth
         val y = pageHeight - signature.position.y * pageHeight - heightPt
         stream.drawImage(image, x, y, widthPt, heightPt)
+    }
+
+    /** [PdfTextChunk] is already in absolute PDF point space, so no page width/height scaling is needed here. */
+    private fun drawTextReplacement(stream: PDPageContentStream, replacement: PageAnnotation.TextReplacement) {
+        val chunk = replacement.original
+        val descentPadding = chunk.height * TEXT_REPLACEMENT_DESCENT_PADDING_FRACTION
+        // A little extra above the estimated ascent too: [PdfTextChunk.height] is derived from
+        // one run's glyph metrics and can slightly undershoot tall/accented characters.
+        val topPadding = chunk.height * TEXT_REPLACEMENT_TOP_PADDING_FRACTION
+
+        stream.saveGraphicsState()
+        stream.setNonStrokingColor(255, 255, 255)
+        stream.fillRect(
+            chunk.x,
+            chunk.baselineY - descentPadding,
+            chunk.width,
+            chunk.height + descentPadding + topPadding,
+        )
+        stream.restoreGraphicsState()
+
+        if (replacement.newText.isNotBlank()) {
+            stream.saveGraphicsState()
+            stream.setNonStrokingColor(0, 0, 0)
+            stream.beginText()
+            stream.setFont(PDType1Font.HELVETICA, chunk.fontSizePt)
+            stream.newLineAtOffset(chunk.x, chunk.baselineY)
+            stream.showText(replacement.newText)
+            stream.endText()
+            stream.restoreGraphicsState()
+        }
     }
 }

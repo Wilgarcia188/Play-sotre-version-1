@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileOpen
+import androidx.compose.material.icons.filled.FindReplace
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.Button
@@ -50,10 +51,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -77,6 +80,11 @@ import com.pdfsuite.app.R
 import com.pdfsuite.app.pdf.AnnotationTool
 import com.pdfsuite.app.pdf.NormalizedPoint
 import com.pdfsuite.app.pdf.PageAnnotation
+import com.pdfsuite.app.pdf.PageTextInfo
+import com.pdfsuite.app.pdf.PdfTextChunk
+import com.pdfsuite.app.pdf.TEXT_REPLACEMENT_DESCENT_PADDING_FRACTION
+import com.pdfsuite.app.pdf.TEXT_REPLACEMENT_TOP_PADDING_FRACTION
+import kotlinx.coroutines.launch
 
 @Composable
 fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel()) {
@@ -85,9 +93,11 @@ fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel(
     val configuration = LocalConfiguration.current
     val previewWidthPx = with(density) { configuration.screenWidthDp.dp.roundToPx() }
     val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     var pendingTextPosition by remember { mutableStateOf<NormalizedPoint?>(null) }
     var pendingSignaturePosition by remember { mutableStateOf<NormalizedPoint?>(null) }
+    var pendingEditTextChunk by remember { mutableStateOf<PdfTextChunk?>(null) }
     var showSignaturePad by remember { mutableStateOf(false) }
     var lastPageBoxSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -100,6 +110,7 @@ fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel(
 
     val successMessage = stringResource(R.string.annotate_save_success)
     val errorMessage = stringResource(R.string.annotate_save_error)
+    val editTextNotFoundMessage = stringResource(R.string.annotate_edit_text_not_found)
 
     LaunchedEffect(uiState.status) {
         when (uiState.status) {
@@ -158,6 +169,7 @@ fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel(
                         bitmap = bitmap,
                         tool = uiState.selectedTool,
                         annotations = uiState.annotationsByPage[uiState.currentPageIndex].orEmpty(),
+                        pageTextInfo = uiState.currentPageText,
                         onSizeChanged = { lastPageBoxSize = it },
                         onStrokeCommitted = { points, tool ->
                             viewModel.addAnnotation(PageAnnotation.Stroke(points, tool))
@@ -176,6 +188,15 @@ fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel(
                             } else {
                                 pendingSignaturePosition = position
                                 showSignaturePad = true
+                            }
+                        },
+                        onTapForEditText = { position ->
+                            val info = uiState.currentPageText
+                            val chunk = info?.let { findTappedChunk(position, it) }
+                            if (chunk != null) {
+                                pendingEditTextChunk = chunk
+                            } else {
+                                coroutineScope.launch { snackbarHostState.showSnackbar(editTextNotFoundMessage) }
                             }
                         },
                     )
@@ -206,7 +227,8 @@ fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel(
     }
 
     pendingTextPosition?.let { position ->
-        TextNoteDialog(
+        TextEntryDialog(
+            title = stringResource(R.string.annotate_text_dialog_title),
             onConfirm = { text ->
                 if (text.isNotBlank()) {
                     viewModel.addAnnotation(PageAnnotation.TextNote(position, text))
@@ -214,6 +236,18 @@ fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel(
                 pendingTextPosition = null
             },
             onDismiss = { pendingTextPosition = null },
+        )
+    }
+
+    pendingEditTextChunk?.let { chunk ->
+        TextEntryDialog(
+            title = stringResource(R.string.annotate_edit_text_dialog_title),
+            initialText = chunk.text,
+            onConfirm = { text ->
+                viewModel.replaceText(chunk, text)
+                pendingEditTextChunk = null
+            },
+            onDismiss = { pendingEditTextChunk = null },
         )
     }
 
@@ -280,6 +314,12 @@ private fun ToolBar(
                 contentDescription = stringResource(R.string.annotate_tool_signature),
                 onClick = { onSelectTool(AnnotationTool.SIGNATURE) },
             )
+            ToolButton(
+                icon = Icons.Filled.FindReplace,
+                selected = selectedTool == AnnotationTool.EDIT_TEXT,
+                contentDescription = stringResource(R.string.annotate_tool_edit_text),
+                onClick = { onSelectTool(AnnotationTool.EDIT_TEXT) },
+            )
             IconButton(onClick = onUndo) {
                 Icon(Icons.Filled.Undo, contentDescription = stringResource(R.string.annotate_undo))
             }
@@ -321,10 +361,12 @@ private fun AnnotationCanvas(
     bitmap: Bitmap,
     tool: AnnotationTool,
     annotations: List<PageAnnotation>,
+    pageTextInfo: PageTextInfo?,
     onSizeChanged: (IntSize) -> Unit,
     onStrokeCommitted: (List<NormalizedPoint>, AnnotationTool) -> Unit,
     onTapForText: (NormalizedPoint) -> Unit,
     onTapForSignature: (NormalizedPoint) -> Unit,
+    onTapForEditText: (NormalizedPoint) -> Unit,
 ) {
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
     var currentStrokePoints by remember(tool) { mutableStateOf(listOf<Offset>()) }
@@ -355,7 +397,11 @@ private fun AnnotationCanvas(
                     val size = boxSize
                     if (size.width > 0 && size.height > 0) {
                         val normalized = NormalizedPoint(offset.x / size.width, offset.y / size.height)
-                        if (tool == AnnotationTool.TEXT) onTapForText(normalized) else onTapForSignature(normalized)
+                        when (tool) {
+                            AnnotationTool.TEXT -> onTapForText(normalized)
+                            AnnotationTool.EDIT_TEXT -> onTapForEditText(normalized)
+                            else -> onTapForSignature(normalized)
+                        }
                     }
                 },
             ),
@@ -379,6 +425,9 @@ private fun AnnotationCanvas(
                                 (annotation.heightFraction * size.height).toInt().coerceAtLeast(1),
                             ),
                         )
+                    }
+                    is PageAnnotation.TextReplacement -> {
+                        pageTextInfo?.let { info -> drawTextReplacement(annotation, info, size.width, size.height) }
                     }
                 }
             }
@@ -436,6 +485,50 @@ private fun DrawScope.drawTextNote(note: PageAnnotation.TextNote, widthPx: Float
     )
 }
 
+/** Mirrors [com.pdfsuite.app.pdf.AnnotateOperations]'s drawTextReplacement, but in on-screen
+ * pixel space, converting the chunk's absolute PDF-point box via [info]'s page size. */
+private fun DrawScope.drawTextReplacement(
+    replacement: PageAnnotation.TextReplacement,
+    info: PageTextInfo,
+    widthPx: Float,
+    heightPx: Float,
+) {
+    val chunk = replacement.original
+    val descentPaddingPt = chunk.height * TEXT_REPLACEMENT_DESCENT_PADDING_FRACTION
+    val topPaddingPt = chunk.height * TEXT_REPLACEMENT_TOP_PADDING_FRACTION
+    val boxTopPt = info.pageHeightPt - (chunk.baselineY + chunk.height + topPaddingPt)
+
+    val left = (chunk.x / info.pageWidthPt) * widthPx
+    val top = (boxTopPt / info.pageHeightPt) * heightPx
+    val boxWidth = (chunk.width / info.pageWidthPt) * widthPx
+    val boxHeight = ((chunk.height + descentPaddingPt + topPaddingPt) / info.pageHeightPt) * heightPx
+
+    drawRect(color = Color.White, topLeft = Offset(left, top), size = Size(boxWidth, boxHeight))
+
+    if (replacement.newText.isNotBlank()) {
+        val paint = android.graphics.Paint().apply {
+            color = android.graphics.Color.BLACK
+            textSize = boxHeight * 0.7f
+            isAntiAlias = true
+        }
+        // Where the baseline sits within the covered box, as a fraction of its height -
+        // derived from the same padding constants used to compute boxHeight, so this
+        // always matches regardless of their values.
+        val baselineFraction = (chunk.height + topPaddingPt) / (chunk.height + descentPaddingPt + topPaddingPt)
+        drawContext.canvas.nativeCanvas.drawText(replacement.newText, left, top + boxHeight * baselineFraction, paint)
+    }
+}
+
+private fun findTappedChunk(tap: NormalizedPoint, info: PageTextInfo): PdfTextChunk? {
+    val tapXPt = tap.x * info.pageWidthPt
+    val tapYPt = info.pageHeightPt - tap.y * info.pageHeightPt
+    return info.chunks.firstOrNull { chunk ->
+        val padding = (chunk.height * 0.3f).coerceAtLeast(4f)
+        tapXPt in (chunk.x - padding)..(chunk.x + chunk.width + padding) &&
+            tapYPt in (chunk.baselineY - padding)..(chunk.baselineY + chunk.height + padding)
+    }
+}
+
 private fun Modifier.pointerInputForTool(
     tool: AnnotationTool,
     onDragStart: (Offset) -> Unit,
@@ -452,7 +545,7 @@ private fun Modifier.pointerInputForTool(
                     onDrag = { change, _ -> onDrag(change.position) },
                 )
             }
-            AnnotationTool.TEXT, AnnotationTool.SIGNATURE -> {
+            AnnotationTool.TEXT, AnnotationTool.SIGNATURE, AnnotationTool.EDIT_TEXT -> {
                 detectTapGestures(onTap = onTap)
             }
         }
@@ -460,12 +553,17 @@ private fun Modifier.pointerInputForTool(
 )
 
 @Composable
-private fun TextNoteDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
-    var text by remember { mutableStateOf("") }
+private fun TextEntryDialog(
+    title: String,
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit,
+    initialText: String = "",
+) {
+    var text by remember { mutableStateOf(initialText) }
     Dialog(onDismissRequest = onDismiss) {
         Surface(shape = RoundedCornerShape(12.dp)) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(stringResource(R.string.annotate_text_dialog_title), style = MaterialTheme.typography.titleLarge)
+                Text(title, style = MaterialTheme.typography.titleLarge)
                 OutlinedTextField(
                     value = text,
                     onValueChange = { text = it },

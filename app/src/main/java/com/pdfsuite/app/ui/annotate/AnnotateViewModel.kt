@@ -8,7 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.pdfsuite.app.pdf.AnnotateOperations
 import com.pdfsuite.app.pdf.AnnotationTool
 import com.pdfsuite.app.pdf.PageAnnotation
+import com.pdfsuite.app.pdf.PageTextInfo
 import com.pdfsuite.app.pdf.PdfRendererHelper
+import com.pdfsuite.app.pdf.PdfTextChunk
+import com.pdfsuite.app.pdf.PdfTextExtractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +25,7 @@ data class AnnotateUiState(
     val pageCount: Int = 0,
     val currentPageIndex: Int = 0,
     val currentPageBitmap: Bitmap? = null,
+    val currentPageText: PageTextInfo? = null,
     val annotationsByPage: Map<Int, List<PageAnnotation>> = emptyMap(),
     val selectedTool: AnnotationTool = AnnotationTool.PEN,
     val capturedSignature: Bitmap? = null,
@@ -39,11 +43,13 @@ class AnnotateViewModel(application: Application) : AndroidViewModel(application
             val context = getApplication<Application>()
             val count = PdfRendererHelper.getPageCount(context, uri)
             val firstBitmap = PdfRendererHelper.renderPage(context, uri, 0, previewWidthPx)
+            val textInfo = PdfTextExtractor.extractPageText(context, uri, 0)
             _uiState.update {
                 it.copy(
                     pageCount = count,
                     currentPageIndex = 0,
                     currentPageBitmap = firstBitmap,
+                    currentPageText = textInfo,
                     status = AnnotateStatus.READY,
                 )
             }
@@ -57,7 +63,10 @@ class AnnotateViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             val context = getApplication<Application>()
             val bitmap = PdfRendererHelper.renderPage(context, source, index, previewWidthPx)
-            _uiState.update { it.copy(currentPageIndex = index, currentPageBitmap = bitmap) }
+            val textInfo = PdfTextExtractor.extractPageText(context, source, index)
+            _uiState.update {
+                it.copy(currentPageIndex = index, currentPageBitmap = bitmap, currentPageText = textInfo)
+            }
         }
     }
 
@@ -75,6 +84,10 @@ class AnnotateViewModel(application: Application) : AndroidViewModel(application
             updated[state.currentPageIndex] = updated[state.currentPageIndex].orEmpty() + annotation
             state.copy(annotationsByPage = updated)
         }
+    }
+
+    fun replaceText(original: PdfTextChunk, newText: String) {
+        addAnnotation(PageAnnotation.TextReplacement(original, newText))
     }
 
     fun undoLastOnCurrentPage() {
