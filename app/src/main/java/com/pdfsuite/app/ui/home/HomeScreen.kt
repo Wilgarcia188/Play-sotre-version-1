@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.CallMerge
 import androidx.compose.material.icons.filled.CallSplit
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Compress
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Opacity
 import androidx.compose.material.icons.filled.SyncAlt
@@ -50,6 +51,7 @@ fun HomeScreen(
     onOpenConvert: () -> Unit,
     onOpenWatermark: () -> Unit,
     onOpenScan: () -> Unit,
+    onOpenAnnotate: () -> Unit,
 ) {
     val actions = listOf(
         HomeAction(
@@ -99,6 +101,12 @@ fun HomeScreen(
             description = stringResource(R.string.home_action_watermark_desc),
             icon = Icons.Filled.Opacity,
             onClick = onOpenWatermark,
+        ),
+        HomeAction(
+            title = stringResource(R.string.home_action_annotate),
+            description = stringResource(R.string.home_action_annotate_desc),
+            icon = Icons.Filled.Edit,
+            onClick = onOpenAnnotate,
         ),
     )
 

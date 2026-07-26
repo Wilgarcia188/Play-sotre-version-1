@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.pdfsuite.app.ui.annotate.AnnotateScreen
 import com.pdfsuite.app.ui.compress.CompressScreen
 import com.pdfsuite.app.ui.convert.ConvertScreen
 import com.pdfsuite.app.ui.home.HomeScreen
@@ -24,6 +25,7 @@ object Routes {
     const val CONVERT = "convert"
     const val WATERMARK = "watermark"
     const val SCAN = "scan"
+    const val ANNOTATE = "annotate"
 }
 
 @Composable
@@ -41,6 +43,7 @@ fun PdfSuiteApp() {
                 onOpenConvert = { navController.navigate(Routes.CONVERT) },
                 onOpenWatermark = { navController.navigate(Routes.WATERMARK) },
                 onOpenScan = { navController.navigate(Routes.SCAN) },
+                onOpenAnnotate = { navController.navigate(Routes.ANNOTATE) },
             )
         }
         composable(Routes.VIEWER) {
@@ -66,6 +69,9 @@ fun PdfSuiteApp() {
         }
         composable(Routes.SCAN) {
             ScanScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.ANNOTATE) {
+            AnnotateScreen(onBack = { navController.popBackStack() })
         }
     }
 }

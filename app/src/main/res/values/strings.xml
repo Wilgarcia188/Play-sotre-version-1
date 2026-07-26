@@ -19,6 +19,8 @@
     <string name="home_action_watermark_desc">Agregá un texto diagonal a todas las páginas</string>
     <string name="home_action_scan">Escanear documento</string>
     <string name="home_action_scan_desc">Sacale una foto: se detecta la hoja, se endereza y se mejoran los colores</string>
+    <string name="home_action_annotate">Editar / anotar</string>
+    <string name="home_action_annotate_desc">Dibujá, resaltá, agregá texto y tu firma sobre un PDF</string>
 
     <string name="viewer_title">Visor</string>
     <string name="viewer_pick_file">Elegir PDF</string>
@@ -109,6 +111,27 @@
     <string name="scan_save_success">PDF guardado correctamente</string>
     <string name="scan_save_error">No se pudo guardar el PDF</string>
     <string name="scan_start_error">No se pudo abrir el escáner</string>
+
+    <string name="annotate_title">Editar / anotar</string>
+    <string name="annotate_pick_file">Elegir PDF</string>
+    <string name="annotate_empty">Elegí un PDF para dibujar, resaltar, escribir o firmar sobre él</string>
+    <string name="annotate_tool_pen">Lápiz</string>
+    <string name="annotate_tool_highlighter">Resaltador</string>
+    <string name="annotate_tool_text">Texto</string>
+    <string name="annotate_tool_signature">Firma</string>
+    <string name="annotate_undo">Deshacer</string>
+    <string name="annotate_page_of">Página %1$d de %2$d</string>
+    <string name="annotate_save">Guardar PDF anotado</string>
+    <string name="annotate_save_success">PDF guardado correctamente</string>
+    <string name="annotate_save_error">No se pudo guardar el PDF</string>
+    <string name="annotate_redo_signature">Rehacer firma</string>
+    <string name="annotate_text_dialog_title">Agregar texto</string>
+    <string name="annotate_text_dialog_label">Texto</string>
+    <string name="annotate_cancel">Cancelar</string>
+    <string name="annotate_confirm">Agregar</string>
+    <string name="annotate_signature_hint">Dibujá tu firma con el dedo</string>
+    <string name="annotate_signature_clear">Borrar</string>
+    <string name="annotate_signature_accept">Usar firma</string>
 
     <string name="action_back">Volver</string>
     <string name="action_save">Guardar</string>
