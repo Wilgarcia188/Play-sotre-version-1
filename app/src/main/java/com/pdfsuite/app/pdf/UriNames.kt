@@ -16,4 +16,16 @@ fun Uri.displayName(context: Context): String {
     return fallbackName()
 }
 
+/** Best-effort file size in bytes for a content [Uri], or null if unavailable. */
+fun Uri.fileSizeBytes(context: Context): Long? {
+    val cursor = context.contentResolver.query(this, arrayOf(OpenableColumns.SIZE), null, null, null)
+    cursor?.use {
+        if (it.moveToFirst()) {
+            val index = it.getColumnIndex(OpenableColumns.SIZE)
+            if (index >= 0 && !it.isNull(index)) return it.getLong(index)
+        }
+    }
+    return null
+}
+
 private fun Uri.fallbackName(): String = lastPathSegment ?: toString()

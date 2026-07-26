@@ -11,6 +11,10 @@
     <string name="home_action_split_desc">Elegí páginas y exportá un PDF nuevo</string>
     <string name="home_action_ocr">Reconocer texto (OCR)</string>
     <string name="home_action_ocr_desc">Extraé el texto de un PDF escaneado, sin conexión</string>
+    <string name="home_action_compress">Comprimir PDF</string>
+    <string name="home_action_compress_desc">Reducí el tamaño de un PDF con imágenes o escaneado</string>
+    <string name="home_action_convert">Convertir imagen ↔ PDF</string>
+    <string name="home_action_convert_desc">Creá un PDF desde fotos o exportá páginas como imágenes</string>
 
     <string name="viewer_title">Visor</string>
     <string name="viewer_pick_file">Elegir PDF</string>
@@ -51,6 +55,33 @@
     <string name="ocr_export_success">Texto guardado correctamente</string>
     <string name="ocr_export_error">No se pudo guardar el texto</string>
     <string name="ocr_error">No se pudo procesar el PDF</string>
+
+    <string name="compress_title">Comprimir PDF</string>
+    <string name="compress_pick_file">Elegir PDF</string>
+    <string name="compress_empty">Elegí un PDF para comprimir</string>
+    <string name="compress_original_size">Tamaño original: %1$s</string>
+    <string name="compress_level_high">Alta calidad (menos compresión)</string>
+    <string name="compress_level_balanced">Equilibrado</string>
+    <string name="compress_level_small">Máxima compresión</string>
+    <string name="compress_action">Comprimir y guardar</string>
+    <string name="compress_result">%1$s → %2$s (-%3$d%%)</string>
+    <string name="compress_error">No se pudo comprimir el PDF</string>
+
+    <string name="convert_title">Convertir imagen ↔ PDF</string>
+    <string name="convert_tab_images_to_pdf">Imágenes a PDF</string>
+    <string name="convert_tab_pdf_to_images">PDF a imágenes</string>
+    <string name="convert_add_images">Agregar imágenes</string>
+    <string name="convert_images_empty">Agregá una o más imágenes para armar el PDF</string>
+    <string name="convert_remove">Quitar</string>
+    <string name="convert_create_pdf">Crear PDF</string>
+    <string name="convert_images_success">PDF creado correctamente</string>
+    <string name="convert_images_error">No se pudo crear el PDF</string>
+    <string name="convert_pdf_pick_file">Elegir PDF</string>
+    <string name="convert_pdf_empty">Elegí un PDF para exportar sus páginas como imágenes</string>
+    <string name="convert_pick_folder">Elegir carpeta y exportar</string>
+    <string name="convert_export_progress">Exportando página %1$d de %2$d</string>
+    <string name="convert_export_success">Páginas exportadas correctamente</string>
+    <string name="convert_export_error">No se pudieron exportar las páginas</string>
 
     <string name="action_back">Volver</string>
     <string name="action_save">Guardar</string>

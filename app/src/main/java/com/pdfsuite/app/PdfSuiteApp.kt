@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.pdfsuite.app.ui.compress.CompressScreen
+import com.pdfsuite.app.ui.convert.ConvertScreen
 import com.pdfsuite.app.ui.home.HomeScreen
 import com.pdfsuite.app.ui.merge.MergeScreen
 import com.pdfsuite.app.ui.ocr.OcrScreen
@@ -16,6 +18,8 @@ object Routes {
     const val MERGE = "merge"
     const val SPLIT = "split"
     const val OCR = "ocr"
+    const val COMPRESS = "compress"
+    const val CONVERT = "convert"
 }
 
 @Composable
@@ -29,6 +33,8 @@ fun PdfSuiteApp() {
                 onOpenMerge = { navController.navigate(Routes.MERGE) },
                 onOpenSplit = { navController.navigate(Routes.SPLIT) },
                 onOpenOcr = { navController.navigate(Routes.OCR) },
+                onOpenCompress = { navController.navigate(Routes.COMPRESS) },
+                onOpenConvert = { navController.navigate(Routes.CONVERT) },
             )
         }
         composable(Routes.VIEWER) {
@@ -42,6 +48,12 @@ fun PdfSuiteApp() {
         }
         composable(Routes.OCR) {
             OcrScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.COMPRESS) {
+            CompressScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.CONVERT) {
+            ConvertScreen(onBack = { navController.popBackStack() })
         }
     }
 }
