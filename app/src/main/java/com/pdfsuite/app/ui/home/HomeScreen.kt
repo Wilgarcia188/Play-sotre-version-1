@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CallMerge
 import androidx.compose.material.icons.filled.CallSplit
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Opacity
@@ -48,8 +49,15 @@ fun HomeScreen(
     onOpenCompress: () -> Unit,
     onOpenConvert: () -> Unit,
     onOpenWatermark: () -> Unit,
+    onOpenScan: () -> Unit,
 ) {
     val actions = listOf(
+        HomeAction(
+            title = stringResource(R.string.home_action_scan),
+            description = stringResource(R.string.home_action_scan_desc),
+            icon = Icons.Filled.CameraAlt,
+            onClick = onOpenScan,
+        ),
         HomeAction(
             title = stringResource(R.string.home_action_view),
             description = stringResource(R.string.home_action_view_desc),

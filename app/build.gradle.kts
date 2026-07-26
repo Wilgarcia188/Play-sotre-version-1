@@ -70,5 +70,9 @@ dependencies {
     // On-device OCR - model is bundled in the app, works fully offline
     implementation("com.google.mlkit:text-recognition:16.0.1")
 
+    // Camera document scanner: detects the page, corrects perspective and
+    // enhances colors. Provided by Google Play Services (needs it installed).
+    implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
 }

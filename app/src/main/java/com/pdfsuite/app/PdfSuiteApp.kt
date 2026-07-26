@@ -9,6 +9,7 @@ import com.pdfsuite.app.ui.convert.ConvertScreen
 import com.pdfsuite.app.ui.home.HomeScreen
 import com.pdfsuite.app.ui.merge.MergeScreen
 import com.pdfsuite.app.ui.ocr.OcrScreen
+import com.pdfsuite.app.ui.scan.ScanScreen
 import com.pdfsuite.app.ui.split.SplitScreen
 import com.pdfsuite.app.ui.viewer.ViewerScreen
 import com.pdfsuite.app.ui.watermark.WatermarkScreen
@@ -22,6 +23,7 @@ object Routes {
     const val COMPRESS = "compress"
     const val CONVERT = "convert"
     const val WATERMARK = "watermark"
+    const val SCAN = "scan"
 }
 
 @Composable
@@ -38,6 +40,7 @@ fun PdfSuiteApp() {
                 onOpenCompress = { navController.navigate(Routes.COMPRESS) },
                 onOpenConvert = { navController.navigate(Routes.CONVERT) },
                 onOpenWatermark = { navController.navigate(Routes.WATERMARK) },
+                onOpenScan = { navController.navigate(Routes.SCAN) },
             )
         }
         composable(Routes.VIEWER) {
@@ -60,6 +63,9 @@ fun PdfSuiteApp() {
         }
         composable(Routes.WATERMARK) {
             WatermarkScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.SCAN) {
+            ScanScreen(onBack = { navController.popBackStack() })
         }
     }
 }

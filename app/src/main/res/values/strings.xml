@@ -17,6 +17,8 @@
     <string name="home_action_convert_desc">Creá un PDF desde fotos o exportá páginas como imágenes</string>
     <string name="home_action_watermark">Marca de agua</string>
     <string name="home_action_watermark_desc">Agregá un texto diagonal a todas las páginas</string>
+    <string name="home_action_scan">Escanear documento</string>
+    <string name="home_action_scan_desc">Sacale una foto: se detecta la hoja, se endereza y se mejoran los colores</string>
 
     <string name="viewer_title">Visor</string>
     <string name="viewer_pick_file">Elegir PDF</string>
@@ -97,6 +99,16 @@
     <string name="watermark_success">Marca de agua aplicada correctamente</string>
     <string name="watermark_error">No se pudo aplicar la marca de agua</string>
     <string name="watermark_need_text">Escribí el texto de la marca de agua</string>
+
+    <string name="scan_title">Escanear documento</string>
+    <string name="scan_empty">Sacá una foto de la hoja: la app detecta los bordes, la endereza y mejora el color automáticamente</string>
+    <string name="scan_start">Escanear</string>
+    <string name="scan_pages_ready">Listo: %1$d página(s) escaneada(s)</string>
+    <string name="scan_save">Guardar como PDF</string>
+    <string name="scan_again">Escanear de nuevo</string>
+    <string name="scan_save_success">PDF guardado correctamente</string>
+    <string name="scan_save_error">No se pudo guardar el PDF</string>
+    <string name="scan_start_error">No se pudo abrir el escáner</string>
 
     <string name="action_back">Volver</string>
     <string name="action_save">Guardar</string>
