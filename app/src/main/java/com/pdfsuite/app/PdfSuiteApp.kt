@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.pdfsuite.app.ui.home.HomeScreen
 import com.pdfsuite.app.ui.merge.MergeScreen
+import com.pdfsuite.app.ui.ocr.OcrScreen
 import com.pdfsuite.app.ui.split.SplitScreen
 import com.pdfsuite.app.ui.viewer.ViewerScreen
 
@@ -14,6 +15,7 @@ object Routes {
     const val VIEWER = "viewer"
     const val MERGE = "merge"
     const val SPLIT = "split"
+    const val OCR = "ocr"
 }
 
 @Composable
@@ -26,6 +28,7 @@ fun PdfSuiteApp() {
                 onOpenViewer = { navController.navigate(Routes.VIEWER) },
                 onOpenMerge = { navController.navigate(Routes.MERGE) },
                 onOpenSplit = { navController.navigate(Routes.SPLIT) },
+                onOpenOcr = { navController.navigate(Routes.OCR) },
             )
         }
         composable(Routes.VIEWER) {
@@ -36,6 +39,9 @@ fun PdfSuiteApp() {
         }
         composable(Routes.SPLIT) {
             SplitScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.OCR) {
+            OcrScreen(onBack = { navController.popBackStack() })
         }
     }
 }

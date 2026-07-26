@@ -66,5 +66,8 @@ dependencies {
     // PDF read/write/merge/split - Android port of Apache PDFBox
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
+    // On-device OCR - model is bundled in the app, works fully offline
+    implementation("com.google.mlkit:text-recognition:16.0.1")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
 }

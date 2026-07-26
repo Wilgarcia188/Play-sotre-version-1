@@ -9,6 +9,8 @@
     <string name="home_action_merge_desc">Combinar varios archivos en uno</string>
     <string name="home_action_split">Separar / extraer páginas</string>
     <string name="home_action_split_desc">Elegí páginas y exportá un PDF nuevo</string>
+    <string name="home_action_ocr">Reconocer texto (OCR)</string>
+    <string name="home_action_ocr_desc">Extraé el texto de un PDF escaneado, sin conexión</string>
 
     <string name="viewer_title">Visor</string>
     <string name="viewer_pick_file">Elegir PDF</string>
@@ -37,6 +39,18 @@
     <string name="split_success">PDF exportado correctamente</string>
     <string name="split_error">No se pudo procesar el PDF</string>
     <string name="split_need_one">Seleccioná al menos una página</string>
+
+    <string name="ocr_title">Reconocer texto (OCR)</string>
+    <string name="ocr_pick_file">Elegir PDF</string>
+    <string name="ocr_empty">Elegí un PDF escaneado para reconocer su texto</string>
+    <string name="ocr_progress">Procesando página %1$d de %2$d</string>
+    <string name="ocr_no_text">No se encontró texto en este PDF</string>
+    <string name="ocr_copy">Copiar texto</string>
+    <string name="ocr_save_txt">Guardar como .txt</string>
+    <string name="ocr_copied">Texto copiado al portapapeles</string>
+    <string name="ocr_export_success">Texto guardado correctamente</string>
+    <string name="ocr_export_error">No se pudo guardar el texto</string>
+    <string name="ocr_error">No se pudo procesar el PDF</string>
 
     <string name="action_back">Volver</string>
     <string name="action_save">Guardar</string>

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CallMerge
 import androidx.compose.material.icons.filled.CallSplit
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -40,6 +41,7 @@ fun HomeScreen(
     onOpenViewer: () -> Unit,
     onOpenMerge: () -> Unit,
     onOpenSplit: () -> Unit,
+    onOpenOcr: () -> Unit,
 ) {
     val actions = listOf(
         HomeAction(
@@ -59,6 +61,12 @@ fun HomeScreen(
             description = stringResource(R.string.home_action_split_desc),
             icon = Icons.Filled.CallSplit,
             onClick = onOpenSplit,
+        ),
+        HomeAction(
+            title = stringResource(R.string.home_action_ocr),
+            description = stringResource(R.string.home_action_ocr_desc),
+            icon = Icons.Filled.TextFields,
+            onClick = onOpenOcr,
         ),
     )
 
