@@ -1,41 +1,52 @@
 package com.pdfsuite.app.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
 private val DarkColors = darkColorScheme(
-    primary = PdfBlue80,
-    secondary = PdfSlate80,
-    tertiary = PdfAmber80,
+    primary = PdfIndigo80,
+    onPrimary = Color(0xFF241C55),
+    primaryContainer = PdfIndigoContainerDark,
+    onPrimaryContainer = PdfIndigo80,
+    secondary = PdfIndigo80,
+    background = PdfBackgroundDark,
+    onBackground = PdfOnSurfaceDark,
+    surface = PdfSurfaceDark,
+    onSurface = PdfOnSurfaceDark,
+    surfaceVariant = PdfSurfaceVariantDark,
+    onSurfaceVariant = PdfOnSurfaceMutedDark,
 )
 
 private val LightColors = lightColorScheme(
-    primary = PdfBlue40,
-    secondary = PdfSlate40,
-    tertiary = PdfAmber40,
+    primary = PdfIndigo40,
+    onPrimary = Color.White,
+    primaryContainer = PdfIndigoContainerLight,
+    onPrimaryContainer = PdfIndigo40,
+    secondary = PdfIndigo40,
+    background = PdfBackgroundLight,
+    onBackground = PdfOnSurfaceLight,
+    surface = PdfSurfaceLight,
+    onSurface = PdfOnSurfaceLight,
+    surfaceVariant = PdfIndigoContainerLight,
+    onSurfaceVariant = PdfOnSurfaceMutedLight,
 )
 
+/**
+ * [dynamicColor] defaults to false: on Android 12+ dynamic color derives the
+ * palette from the user's wallpaper, which can wash out this app's deliberate
+ * indigo-on-near-black look into a muddy, low-contrast scheme.
+ */
 @Composable
 fun PdfSuiteTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColors
-        else -> LightColors
-    }
+    val colorScheme = if (darkTheme) DarkColors else LightColors
 
     MaterialTheme(
         colorScheme = colorScheme,
