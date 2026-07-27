@@ -10,6 +10,7 @@ import com.pdfsuite.app.ui.convert.ConvertScreen
 import com.pdfsuite.app.ui.home.HomeScreen
 import com.pdfsuite.app.ui.merge.MergeScreen
 import com.pdfsuite.app.ui.ocr.OcrScreen
+import com.pdfsuite.app.ui.organize.OrganizeScreen
 import com.pdfsuite.app.ui.scan.ScanScreen
 import com.pdfsuite.app.ui.split.SplitScreen
 import com.pdfsuite.app.ui.viewer.ViewerScreen
@@ -26,6 +27,7 @@ object Routes {
     const val WATERMARK = "watermark"
     const val SCAN = "scan"
     const val ANNOTATE = "annotate"
+    const val ORGANIZE = "organize"
 }
 
 @Composable
@@ -44,6 +46,7 @@ fun PdfSuiteApp() {
                 onOpenWatermark = { navController.navigate(Routes.WATERMARK) },
                 onOpenScan = { navController.navigate(Routes.SCAN) },
                 onOpenAnnotate = { navController.navigate(Routes.ANNOTATE) },
+                onOpenOrganize = { navController.navigate(Routes.ORGANIZE) },
             )
         }
         composable(Routes.VIEWER) {
@@ -72,6 +75,9 @@ fun PdfSuiteApp() {
         }
         composable(Routes.ANNOTATE) {
             AnnotateScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.ORGANIZE) {
+            OrganizeScreen(onBack = { navController.popBackStack() })
         }
     }
 }

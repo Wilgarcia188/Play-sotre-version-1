@@ -21,6 +21,8 @@
     <string name="home_action_scan_desc">Sacale una foto: se detecta la hoja, se endereza y se mejoran los colores</string>
     <string name="home_action_annotate">Editar / anotar</string>
     <string name="home_action_annotate_desc">Dibujá, resaltá, agregá texto, tu firma, o editá el texto existente</string>
+    <string name="home_action_organize">Organizar páginas</string>
+    <string name="home_action_organize_desc">Reordená, rotá o eliminá páginas de un PDF</string>
 
     <string name="viewer_title">Visor</string>
     <string name="viewer_pick_file">Elegir PDF</string>
@@ -135,6 +137,18 @@
     <string name="annotate_signature_hint">Dibujá tu firma con el dedo</string>
     <string name="annotate_signature_clear">Borrar</string>
     <string name="annotate_signature_accept">Usar firma</string>
+
+    <string name="organize_title">Organizar páginas</string>
+    <string name="organize_pick_file">Elegir PDF</string>
+    <string name="organize_empty">Elegí un PDF para reordenar, rotar o eliminar sus páginas</string>
+    <string name="organize_page_label">Página %1$d</string>
+    <string name="organize_rotate">Rotar página</string>
+    <string name="organize_move_up">Subir</string>
+    <string name="organize_move_down">Bajar</string>
+    <string name="organize_delete">Eliminar página</string>
+    <string name="organize_save">Guardar PDF organizado</string>
+    <string name="organize_save_success">PDF guardado correctamente</string>
+    <string name="organize_save_error">No se pudo guardar el PDF</string>
 
     <string name="action_back">Volver</string>
     <string name="action_save">Guardar</string>

@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Opacity
+import androidx.compose.material.icons.filled.Reorder
 import androidx.compose.material.icons.filled.SyncAlt
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.Card
@@ -52,6 +53,7 @@ fun HomeScreen(
     onOpenWatermark: () -> Unit,
     onOpenScan: () -> Unit,
     onOpenAnnotate: () -> Unit,
+    onOpenOrganize: () -> Unit,
 ) {
     val actions = listOf(
         HomeAction(
@@ -107,6 +109,12 @@ fun HomeScreen(
             description = stringResource(R.string.home_action_annotate_desc),
             icon = Icons.Filled.Edit,
             onClick = onOpenAnnotate,
+        ),
+        HomeAction(
+            title = stringResource(R.string.home_action_organize),
+            description = stringResource(R.string.home_action_organize_desc),
+            icon = Icons.Filled.Reorder,
+            onClick = onOpenOrganize,
         ),
     )
 
