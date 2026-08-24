@@ -2,6 +2,8 @@ package com.wil.screentimeouttile
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
+import android.provider.Settings
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 
@@ -26,6 +28,17 @@ class ScreenTimeoutTileService : TileService() {
 
     override fun onClick() {
         super.onClick()
+
+        if (!Settings.canDrawOverlays(applicationContext)) {
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:$packageName")
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivityAndCollapse(intent)
+            return
+        }
 
         val isAlwaysOnActive = prefs.getBoolean(KEY_ALWAYS_ON, false)
         val nowActive = !isAlwaysOnActive
