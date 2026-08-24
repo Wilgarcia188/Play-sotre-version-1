@@ -3,6 +3,7 @@
     <string name="tile_label">Pantalla siempre encendida</string>
     <string name="tile_label_active">Siempre encendida</string>
     <string name="tile_label_inactive">Pantalla normal</string>
-    <string name="grant_permission_button">Habilitar permiso de escritura de Ajustes</string>
-    <string name="permission_granted_message">Permiso ya concedido. Agregá el tile desde el panel de ajustes rápidos.</string>
+    <string name="setup_instructions">Deslizá el panel de Ajustes Rápidos, tocá el lápiz de editar y agregá el tile \"Pantalla siempre encendida\". Tocalo para mantener la pantalla encendida; tocalo de nuevo para volver a lo normal.</string>
+    <string name="notification_channel_name">Pantalla siempre encendida</string>
+    <string name="notification_text">La pantalla se va a mantener encendida hasta que desactives el tile.</string>
 </resources>
