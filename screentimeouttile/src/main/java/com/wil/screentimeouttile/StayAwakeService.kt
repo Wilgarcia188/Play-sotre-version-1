@@ -8,12 +8,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
+import android.util.Log
 
 class StayAwakeService : Service() {
 
     companion object {
         const val ACTION_START = "com.wil.screentimeouttile.action.START"
         const val ACTION_STOP = "com.wil.screentimeouttile.action.STOP"
+        private const val TAG = "StayAwakeService"
         private const val CHANNEL_ID = "stay_awake_channel"
         private const val NOTIFICATION_ID = 1
         private const val WAKE_LOCK_TAG = "ScreenTimeoutTile:StayAwake"
@@ -26,10 +28,18 @@ class StayAwakeService : Service() {
             releaseWakeLock()
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
-        } else {
-            startForeground(NOTIFICATION_ID, buildNotification())
-            acquireWakeLock()
+            return START_NOT_STICKY
         }
+
+        // The wake lock is what actually keeps the screen on; acquire it even if
+        // the foreground notification fails to post (e.g. permission denied) so
+        // the core feature still works.
+        try {
+            startForeground(NOTIFICATION_ID, buildNotification())
+        } catch (e: Exception) {
+            Log.e(TAG, "Could not start foreground notification", e)
+        }
+        acquireWakeLock()
         return START_STICKY
     }
 
