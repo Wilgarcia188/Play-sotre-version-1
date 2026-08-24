@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Screen Timeout Tile</string>
+    <string name="tile_label">Pantalla siempre encendida</string>
+    <string name="tile_label_active">Siempre encendida</string>
+    <string name="tile_label_inactive">Pantalla normal</string>
+    <string name="setup_instructions">Tocá el botón para habilitar el permiso de \"Mostrar sobre otras apps\" (necesario para poder mantener la pantalla encendida). Después deslizá el panel de Ajustes Rápidos, tocá el lápiz de editar y agregá el tile \"Pantalla siempre encendida\".</string>
+    <string name="overlay_granted_message">Permiso concedido. Agregá el tile \"Pantalla siempre encendida\" desde el panel de Ajustes Rápidos si todavía no lo hiciste.</string>
+    <string name="grant_overlay_button">Habilitar permiso de superposición</string>
+    <string name="notification_channel_name">Pantalla siempre encendida</string>
+    <string name="notification_text">La pantalla se va a mantener encendida hasta que desactives el tile.</string>
+</resources>
