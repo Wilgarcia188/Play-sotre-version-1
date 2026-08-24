@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PDF Suite"
 include(":app")
+include(":screentimeouttile")

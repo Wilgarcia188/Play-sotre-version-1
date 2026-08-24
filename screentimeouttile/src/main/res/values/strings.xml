@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Screen Timeout Tile</string>
+    <string name="tile_label">Pantalla siempre encendida</string>
+    <string name="tile_label_active">Siempre encendida</string>
+    <string name="tile_label_inactive">Pantalla normal</string>
+    <string name="grant_permission_button">Habilitar permiso de escritura de Ajustes</string>
+    <string name="permission_granted_message">Permiso ya concedido. Agregá el tile desde el panel de ajustes rápidos.</string>
+</resources>
