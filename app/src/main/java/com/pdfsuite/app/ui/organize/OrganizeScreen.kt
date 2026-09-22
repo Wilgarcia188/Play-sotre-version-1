@@ -49,25 +49,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfsuite.app.R
+import com.pdfsuite.app.ui.common.SavedFileSheetHost
+import com.pdfsuite.app.ui.common.rememberSavedFileHolder
 
 @Composable
-fun OrganizeScreen(onBack: () -> Unit, viewModel: OrganizeViewModel = viewModel()) {
+fun OrganizeScreen(
+    onBack: () -> Unit,
+    onOpenInViewer: (Uri) -> Unit,
+    viewModel: OrganizeViewModel = viewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val savedFile = rememberSavedFileHolder()
 
     val pickPdf = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let { viewModel.openPdf(it, THUMB_WIDTH_PX) }
     }
     val saveOrganized = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
-        uri?.let { viewModel.save(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.save(it)
+        }
     }
 
-    val successMessage = stringResource(R.string.organize_save_success)
     val errorMessage = stringResource(R.string.organize_save_error)
 
     LaunchedEffect(uiState.status) {
         when (uiState.status) {
-            OrganizeStatus.SUCCESS -> snackbarHostState.showSnackbar(successMessage)
+            OrganizeStatus.SUCCESS -> savedFile.show()
             OrganizeStatus.ERROR -> snackbarHostState.showSnackbar(errorMessage)
             else -> Unit
         }
@@ -137,6 +146,8 @@ fun OrganizeScreen(onBack: () -> Unit, viewModel: OrganizeViewModel = viewModel(
                 }
             }
         }
+
+        SavedFileSheetHost(holder = savedFile, onOpenInViewer = onOpenInViewer)
     }
 }
 

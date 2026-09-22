@@ -39,24 +39,36 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfsuite.app.R
 import com.pdfsuite.app.pdf.displayName
 import com.pdfsuite.app.pdf.toReadableSize
+import com.pdfsuite.app.ui.common.SavedFileSheetHost
+import com.pdfsuite.app.ui.common.rememberSavedFileHolder
 
 @Composable
-fun CompressScreen(onBack: () -> Unit, viewModel: CompressViewModel = viewModel()) {
+fun CompressScreen(
+    onBack: () -> Unit,
+    onOpenInViewer: (Uri) -> Unit,
+    viewModel: CompressViewModel = viewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val savedFile = rememberSavedFileHolder()
 
     val pickPdf = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let { viewModel.selectFile(it) }
     }
     val savePdf = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
-        uri?.let { viewModel.compress(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.compress(it)
+        }
     }
 
     val errorMessage = stringResource(R.string.compress_error)
 
     LaunchedEffect(uiState.status) {
-        if (uiState.status == CompressStatus.ERROR) {
-            snackbarHostState.showSnackbar(errorMessage)
+        when (uiState.status) {
+            CompressStatus.ERROR -> snackbarHostState.showSnackbar(errorMessage)
+            CompressStatus.DONE -> savedFile.show()
+            else -> Unit
         }
     }
 
@@ -160,5 +172,7 @@ fun CompressScreen(onBack: () -> Unit, viewModel: CompressViewModel = viewModel(
                 }
             }
         }
+
+        SavedFileSheetHost(holder = savedFile, onOpenInViewer = onOpenInViewer)
     }
 }

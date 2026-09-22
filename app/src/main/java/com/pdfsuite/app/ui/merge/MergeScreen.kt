@@ -42,27 +42,36 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfsuite.app.R
 import com.pdfsuite.app.pdf.displayName
+import com.pdfsuite.app.ui.common.SavedFileSheetHost
+import com.pdfsuite.app.ui.common.rememberSavedFileHolder
 
 @Composable
-fun MergeScreen(onBack: () -> Unit, viewModel: MergeViewModel = viewModel()) {
+fun MergeScreen(
+    onBack: () -> Unit,
+    onOpenInViewer: (Uri) -> Unit,
+    viewModel: MergeViewModel = viewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val savedFile = rememberSavedFileHolder()
 
     val addFiles = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris: List<Uri> ->
         if (uris.isNotEmpty()) viewModel.addFiles(uris)
     }
     val saveMerged = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
-        uri?.let { viewModel.merge(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.merge(it)
+        }
     }
 
-    val successMessage = stringResource(R.string.merge_success)
     val errorMessage = stringResource(R.string.merge_error)
     val needTwoMessage = stringResource(R.string.merge_need_two)
 
     LaunchedEffect(uiState.status) {
         when (uiState.status) {
-            MergeStatus.SUCCESS -> snackbarHostState.showSnackbar(successMessage)
+            MergeStatus.SUCCESS -> savedFile.show()
             MergeStatus.ERROR -> snackbarHostState.showSnackbar(errorMessage)
             MergeStatus.NEED_TWO -> snackbarHostState.showSnackbar(needTwoMessage)
             else -> Unit
@@ -128,6 +137,8 @@ fun MergeScreen(onBack: () -> Unit, viewModel: MergeViewModel = viewModel()) {
                 Text(stringResource(R.string.merge_action))
             }
         }
+
+        SavedFileSheetHost(holder = savedFile, onOpenInViewer = onOpenInViewer)
     }
 }
 

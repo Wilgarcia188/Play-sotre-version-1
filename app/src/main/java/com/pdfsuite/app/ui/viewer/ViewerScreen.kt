@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FileOpen
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -39,15 +41,24 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfsuite.app.R
+import com.pdfsuite.app.pdf.displayName
+import com.pdfsuite.app.ui.common.shareFile
 
 @Composable
-fun ViewerScreen(onBack: () -> Unit, viewModel: ViewerViewModel = viewModel()) {
+fun ViewerScreen(
+    onBack: () -> Unit,
+    initialUri: Uri? = null,
+    viewModel: ViewerViewModel = viewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
     val targetWidthPx = with(density) { configuration.screenWidthDp.dp.roundToPx() }
@@ -56,16 +67,34 @@ fun ViewerScreen(onBack: () -> Unit, viewModel: ViewerViewModel = viewModel()) {
         uri?.let { viewModel.openPdf(it, targetWidthPx) }
     }
 
+    LaunchedEffect(initialUri) {
+        initialUri?.let { viewModel.openPdf(it, targetWidthPx) }
+    }
+
+    val currentUri = uiState.uri
+    val currentName = remember(currentUri) { currentUri?.displayName(context) }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.viewer_title)) },
+                title = {
+                    Text(
+                        text = currentName ?: stringResource(R.string.viewer_title),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
+                    if (currentUri != null) {
+                        IconButton(onClick = { context.shareFile(currentUri) }) {
+                            Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.viewer_share))
+                        }
+                    }
                     IconButton(onClick = { pickPdf.launch(arrayOf("application/pdf")) }) {
                         Icon(Icons.Filled.FileOpen, contentDescription = stringResource(R.string.viewer_pick_file))
                     }

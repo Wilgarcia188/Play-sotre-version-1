@@ -24,8 +24,17 @@
     <string name="home_action_organize">Organizar páginas</string>
     <string name="home_action_organize_desc">Reordená, rotá o eliminá páginas de un PDF</string>
 
+    <string name="saved_title">Guardado</string>
+    <string name="saved_pages">%1$d página(s)</string>
+    <string name="saved_review">Ver el resultado</string>
+    <string name="saved_share">Compartir</string>
+    <string name="saved_open_with">Abrir con otra app</string>
+    <string name="saved_done">Listo</string>
+    <string name="saved_no_app">No hay ninguna app para abrir este archivo</string>
+
     <string name="viewer_title">Visor</string>
     <string name="viewer_pick_file">Elegir PDF</string>
+    <string name="viewer_share">Compartir</string>
     <string name="viewer_page_of">Página %1$d de %2$d</string>
     <string name="viewer_empty">Elegí un PDF para verlo</string>
     <string name="viewer_error">No se pudo abrir el PDF</string>
@@ -37,7 +46,6 @@
     <string name="merge_move_up">Subir</string>
     <string name="merge_move_down">Bajar</string>
     <string name="merge_remove">Quitar</string>
-    <string name="merge_success">PDF combinado guardado correctamente</string>
     <string name="merge_error">No se pudo unir los PDFs</string>
     <string name="merge_need_two">Agregá al menos dos archivos</string>
 
@@ -48,7 +56,6 @@
     <string name="split_clear">Ninguna</string>
     <string name="split_extract_selected">Extraer seleccionadas</string>
     <string name="split_export_rest">Exportar el resto (eliminar seleccionadas)</string>
-    <string name="split_success">PDF exportado correctamente</string>
     <string name="split_error">No se pudo procesar el PDF</string>
     <string name="split_need_one">Seleccioná al menos una página</string>
 
@@ -60,7 +67,6 @@
     <string name="ocr_copy">Copiar texto</string>
     <string name="ocr_save_txt">Guardar como .txt</string>
     <string name="ocr_copied">Texto copiado al portapapeles</string>
-    <string name="ocr_export_success">Texto guardado correctamente</string>
     <string name="ocr_export_error">No se pudo guardar el texto</string>
     <string name="ocr_error">No se pudo procesar el PDF</string>
 
@@ -82,7 +88,6 @@
     <string name="convert_images_empty">Agregá una o más imágenes para armar el PDF</string>
     <string name="convert_remove">Quitar</string>
     <string name="convert_create_pdf">Crear PDF</string>
-    <string name="convert_images_success">PDF creado correctamente</string>
     <string name="convert_images_error">No se pudo crear el PDF</string>
     <string name="convert_pdf_pick_file">Elegir PDF</string>
     <string name="convert_pdf_empty">Elegí un PDF para exportar sus páginas como imágenes</string>
@@ -100,7 +105,6 @@
     <string name="watermark_opacity_medium">Media</string>
     <string name="watermark_opacity_strong">Fuerte</string>
     <string name="watermark_action">Aplicar y guardar</string>
-    <string name="watermark_success">Marca de agua aplicada correctamente</string>
     <string name="watermark_error">No se pudo aplicar la marca de agua</string>
     <string name="watermark_need_text">Escribí el texto de la marca de agua</string>
 
@@ -110,7 +114,6 @@
     <string name="scan_pages_ready">Listo: %1$d página(s) escaneada(s)</string>
     <string name="scan_save">Guardar como PDF</string>
     <string name="scan_again">Escanear de nuevo</string>
-    <string name="scan_save_success">PDF guardado correctamente</string>
     <string name="scan_save_error">No se pudo guardar el PDF</string>
     <string name="scan_start_error">No se pudo abrir el escáner</string>
 
@@ -127,7 +130,6 @@
     <string name="annotate_undo">Deshacer</string>
     <string name="annotate_page_of">Página %1$d de %2$d</string>
     <string name="annotate_save">Guardar PDF anotado</string>
-    <string name="annotate_save_success">PDF guardado correctamente</string>
     <string name="annotate_save_error">No se pudo guardar el PDF</string>
     <string name="annotate_redo_signature">Rehacer firma</string>
     <string name="annotate_text_dialog_title">Agregar texto</string>
@@ -147,7 +149,6 @@
     <string name="organize_move_down">Bajar</string>
     <string name="organize_delete">Eliminar página</string>
     <string name="organize_save">Guardar PDF organizado</string>
-    <string name="organize_save_success">PDF guardado correctamente</string>
     <string name="organize_save_error">No se pudo guardar el PDF</string>
 
     <string name="action_back">Volver</string>

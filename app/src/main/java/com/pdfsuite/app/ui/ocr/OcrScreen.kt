@@ -43,6 +43,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfsuite.app.R
+import com.pdfsuite.app.ui.common.MIME_TEXT
+import com.pdfsuite.app.ui.common.SavedFileSheetHost
+import com.pdfsuite.app.ui.common.rememberSavedFileHolder
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,23 +54,26 @@ fun OcrScreen(onBack: () -> Unit, viewModel: OcrViewModel = viewModel()) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val savedFile = rememberSavedFileHolder()
 
     val pickPdf = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let { viewModel.startOcr(it) }
     }
     val saveText = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri: Uri? ->
-        uri?.let { viewModel.exportText(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.exportText(it)
+        }
     }
 
     val copiedMessage = stringResource(R.string.ocr_copied)
-    val exportedMessage = stringResource(R.string.ocr_export_success)
     val exportErrorMessage = stringResource(R.string.ocr_export_error)
     val errorMessage = stringResource(R.string.ocr_error)
 
     LaunchedEffect(uiState.status) {
         when (uiState.status) {
             OcrStatus.ERROR -> snackbarHostState.showSnackbar(errorMessage)
-            OcrStatus.EXPORTED -> snackbarHostState.showSnackbar(exportedMessage)
+            OcrStatus.EXPORTED -> savedFile.show()
             OcrStatus.EXPORT_ERROR -> snackbarHostState.showSnackbar(exportErrorMessage)
             else -> Unit
         }
@@ -159,5 +165,7 @@ fun OcrScreen(onBack: () -> Unit, viewModel: OcrViewModel = viewModel()) {
                 }
             }
         }
+
+        SavedFileSheetHost(holder = savedFile, mimeType = MIME_TEXT)
     }
 }

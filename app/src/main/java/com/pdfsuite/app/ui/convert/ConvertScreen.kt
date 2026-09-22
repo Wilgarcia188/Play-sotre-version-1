@@ -47,9 +47,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfsuite.app.R
 import com.pdfsuite.app.pdf.displayName
+import com.pdfsuite.app.ui.common.SavedFileSheetHost
+import com.pdfsuite.app.ui.common.rememberSavedFileHolder
 
 @Composable
-fun ConvertScreen(onBack: () -> Unit, viewModel: ConvertViewModel = viewModel()) {
+fun ConvertScreen(
+    onBack: () -> Unit,
+    onOpenInViewer: (Uri) -> Unit,
+    viewModel: ConvertViewModel = viewModel(),
+) {
     var selectedTab by remember { mutableStateOf(0) }
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -80,7 +86,7 @@ fun ConvertScreen(onBack: () -> Unit, viewModel: ConvertViewModel = viewModel())
                 )
             }
             if (selectedTab == 0) {
-                ImagesToPdfTab(viewModel, snackbarHostState)
+                ImagesToPdfTab(viewModel, snackbarHostState, onOpenInViewer)
             } else {
                 PdfToImagesTab(viewModel, snackbarHostState)
             }
@@ -89,23 +95,30 @@ fun ConvertScreen(onBack: () -> Unit, viewModel: ConvertViewModel = viewModel())
 }
 
 @Composable
-private fun ImagesToPdfTab(viewModel: ConvertViewModel, snackbarHostState: SnackbarHostState) {
+private fun ImagesToPdfTab(
+    viewModel: ConvertViewModel,
+    snackbarHostState: SnackbarHostState,
+    onOpenInViewer: (Uri) -> Unit,
+) {
     val uiState by viewModel.imagesToPdfState.collectAsState()
     val context = LocalContext.current
+    val savedFile = rememberSavedFileHolder()
 
     val addImages = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris: List<Uri> ->
         if (uris.isNotEmpty()) viewModel.addImages(uris)
     }
     val savePdf = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
-        uri?.let { viewModel.createPdf(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.createPdf(it)
+        }
     }
 
-    val successMessage = stringResource(R.string.convert_images_success)
     val errorMessage = stringResource(R.string.convert_images_error)
 
     LaunchedEffect(uiState.status) {
         when (uiState.status) {
-            ImagesToPdfStatus.SUCCESS -> snackbarHostState.showSnackbar(successMessage)
+            ImagesToPdfStatus.SUCCESS -> savedFile.show()
             ImagesToPdfStatus.ERROR, ImagesToPdfStatus.NEED_IMAGE -> snackbarHostState.showSnackbar(errorMessage)
             else -> Unit
         }
@@ -173,6 +186,8 @@ private fun ImagesToPdfTab(viewModel: ConvertViewModel, snackbarHostState: Snack
             Text(stringResource(R.string.convert_create_pdf))
         }
     }
+
+    SavedFileSheetHost(holder = savedFile, onOpenInViewer = onOpenInViewer)
 }
 
 @Composable
