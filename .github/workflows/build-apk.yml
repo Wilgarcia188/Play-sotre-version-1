@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -37,3 +39,15 @@ jobs:
         with:
           name: pdf-suite-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      # Los artefactos de Actions solo se bajan estando logueado y vienen en .zip,
+      # que Android no puede instalar. Una release da un enlace directo al .apk.
+      - name: Publish APK as a release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk pdf-suite-debug.apk
+          gh release create "debug-${{ github.run_number }}" pdf-suite-debug.apk \
+            --title "PDF Suite debug #${{ github.run_number }}" \
+            --notes "Build de ${{ github.ref_name }} (${{ github.sha }})" \
+            --prerelease
