@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class ViewerUiState(
+    val uri: Uri? = null,
     val isLoading: Boolean = false,
     val pages: List<Bitmap> = emptyList(),
     val error: Boolean = false,
@@ -23,15 +24,16 @@ class ViewerViewModel(application: Application) : AndroidViewModel(application) 
     val uiState: StateFlow<ViewerUiState> = _uiState.asStateFlow()
 
     fun openPdf(uri: Uri, targetWidthPx: Int) {
-        _uiState.value = ViewerUiState(isLoading = true)
+        if (_uiState.value.uri == uri && _uiState.value.pages.isNotEmpty()) return
+        _uiState.value = ViewerUiState(uri = uri, isLoading = true)
         viewModelScope.launch {
             val context = getApplication<Application>()
             runCatching {
                 PdfRendererHelper.renderAllPages(context, uri, targetWidthPx)
             }.onSuccess { pages ->
-                _uiState.value = ViewerUiState(isLoading = false, pages = pages)
+                _uiState.value = ViewerUiState(uri = uri, isLoading = false, pages = pages)
             }.onFailure {
-                _uiState.value = ViewerUiState(isLoading = false, error = true)
+                _uiState.value = ViewerUiState(uri = uri, isLoading = false, error = true)
             }
         }
     }

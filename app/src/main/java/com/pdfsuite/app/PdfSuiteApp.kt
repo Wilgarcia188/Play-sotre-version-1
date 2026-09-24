@@ -1,9 +1,13 @@
 package com.pdfsuite.app
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.pdfsuite.app.ui.annotate.AnnotateScreen
 import com.pdfsuite.app.ui.compress.CompressScreen
 import com.pdfsuite.app.ui.convert.ConvertScreen
@@ -28,11 +32,21 @@ object Routes {
     const val SCAN = "scan"
     const val ANNOTATE = "annotate"
     const val ORGANIZE = "organize"
+
+    const val VIEWER_URI_ARG = "uri"
+    const val VIEWER_WITH_ARG = "$VIEWER?$VIEWER_URI_ARG={$VIEWER_URI_ARG}"
+
+    fun viewerFor(uri: Uri): String = "$VIEWER?$VIEWER_URI_ARG=${Uri.encode(uri.toString())}"
 }
 
 @Composable
-fun PdfSuiteApp() {
+fun PdfSuiteApp(initialPdfUri: Uri? = null) {
     val navController = rememberNavController()
+    val openInViewer: (Uri) -> Unit = { uri -> navController.navigate(Routes.viewerFor(uri)) }
+
+    LaunchedEffect(initialPdfUri) {
+        initialPdfUri?.let { navController.navigate(Routes.viewerFor(it)) }
+    }
 
     NavHost(navController = navController, startDestination = Routes.HOME) {
         composable(Routes.HOME) {
@@ -49,35 +63,45 @@ fun PdfSuiteApp() {
                 onOpenOrganize = { navController.navigate(Routes.ORGANIZE) },
             )
         }
-        composable(Routes.VIEWER) {
-            ViewerScreen(onBack = { navController.popBackStack() })
+        composable(
+            route = Routes.VIEWER_WITH_ARG,
+            arguments = listOf(
+                navArgument(Routes.VIEWER_URI_ARG) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+            ),
+        ) { backStackEntry ->
+            val uri = backStackEntry.arguments?.getString(Routes.VIEWER_URI_ARG)?.let(Uri::parse)
+            ViewerScreen(onBack = { navController.popBackStack() }, initialUri = uri)
         }
         composable(Routes.MERGE) {
-            MergeScreen(onBack = { navController.popBackStack() })
+            MergeScreen(onBack = { navController.popBackStack() }, onOpenInViewer = openInViewer)
         }
         composable(Routes.SPLIT) {
-            SplitScreen(onBack = { navController.popBackStack() })
+            SplitScreen(onBack = { navController.popBackStack() }, onOpenInViewer = openInViewer)
         }
         composable(Routes.OCR) {
             OcrScreen(onBack = { navController.popBackStack() })
         }
         composable(Routes.COMPRESS) {
-            CompressScreen(onBack = { navController.popBackStack() })
+            CompressScreen(onBack = { navController.popBackStack() }, onOpenInViewer = openInViewer)
         }
         composable(Routes.CONVERT) {
-            ConvertScreen(onBack = { navController.popBackStack() })
+            ConvertScreen(onBack = { navController.popBackStack() }, onOpenInViewer = openInViewer)
         }
         composable(Routes.WATERMARK) {
-            WatermarkScreen(onBack = { navController.popBackStack() })
+            WatermarkScreen(onBack = { navController.popBackStack() }, onOpenInViewer = openInViewer)
         }
         composable(Routes.SCAN) {
-            ScanScreen(onBack = { navController.popBackStack() })
+            ScanScreen(onBack = { navController.popBackStack() }, onOpenInViewer = openInViewer)
         }
         composable(Routes.ANNOTATE) {
-            AnnotateScreen(onBack = { navController.popBackStack() })
+            AnnotateScreen(onBack = { navController.popBackStack() }, onOpenInViewer = openInViewer)
         }
         composable(Routes.ORGANIZE) {
-            OrganizeScreen(onBack = { navController.popBackStack() })
+            OrganizeScreen(onBack = { navController.popBackStack() }, onOpenInViewer = openInViewer)
         }
     }
 }

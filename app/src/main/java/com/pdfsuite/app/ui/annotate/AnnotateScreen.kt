@@ -84,16 +84,23 @@ import com.pdfsuite.app.pdf.PageTextInfo
 import com.pdfsuite.app.pdf.PdfTextChunk
 import com.pdfsuite.app.pdf.TEXT_REPLACEMENT_DESCENT_PADDING_FRACTION
 import com.pdfsuite.app.pdf.TEXT_REPLACEMENT_TOP_PADDING_FRACTION
+import com.pdfsuite.app.ui.common.SavedFileSheetHost
+import com.pdfsuite.app.ui.common.rememberSavedFileHolder
 import kotlinx.coroutines.launch
 
 @Composable
-fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel()) {
+fun AnnotateScreen(
+    onBack: () -> Unit,
+    onOpenInViewer: (Uri) -> Unit,
+    viewModel: AnnotateViewModel = viewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
     val previewWidthPx = with(density) { configuration.screenWidthDp.dp.roundToPx() }
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val savedFile = rememberSavedFileHolder()
 
     var pendingTextPosition by remember { mutableStateOf<NormalizedPoint?>(null) }
     var pendingSignaturePosition by remember { mutableStateOf<NormalizedPoint?>(null) }
@@ -105,16 +112,18 @@ fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel(
         uri?.let { viewModel.openPdf(it, previewWidthPx) }
     }
     val savePdf = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
-        uri?.let { viewModel.save(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.save(it)
+        }
     }
 
-    val successMessage = stringResource(R.string.annotate_save_success)
     val errorMessage = stringResource(R.string.annotate_save_error)
     val editTextNotFoundMessage = stringResource(R.string.annotate_edit_text_not_found)
 
     LaunchedEffect(uiState.status) {
         when (uiState.status) {
-            AnnotateStatus.SUCCESS -> snackbarHostState.showSnackbar(successMessage)
+            AnnotateStatus.SUCCESS -> savedFile.show()
             AnnotateStatus.ERROR -> snackbarHostState.showSnackbar(errorMessage)
             else -> Unit
         }
@@ -272,6 +281,8 @@ fun AnnotateScreen(onBack: () -> Unit, viewModel: AnnotateViewModel = viewModel(
             },
         )
     }
+
+    SavedFileSheetHost(holder = savedFile, onOpenInViewer = onOpenInViewer)
 }
 
 @Composable

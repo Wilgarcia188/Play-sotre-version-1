@@ -39,17 +39,23 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import com.pdfsuite.app.R
 import com.pdfsuite.app.pdf.findActivity
+import com.pdfsuite.app.ui.common.SavedFileSheetHost
+import com.pdfsuite.app.ui.common.rememberSavedFileHolder
 import kotlinx.coroutines.launch
 
 @Composable
-fun ScanScreen(onBack: () -> Unit, viewModel: ScanViewModel = viewModel()) {
+fun ScanScreen(
+    onBack: () -> Unit,
+    onOpenInViewer: (Uri) -> Unit,
+    viewModel: ScanViewModel = viewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val activity = remember(context) { context.findActivity() }
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val savedFile = rememberSavedFileHolder()
 
-    val successMessage = stringResource(R.string.scan_save_success)
     val errorMessage = stringResource(R.string.scan_save_error)
     val scanErrorMessage = stringResource(R.string.scan_start_error)
 
@@ -62,12 +68,15 @@ fun ScanScreen(onBack: () -> Unit, viewModel: ScanViewModel = viewModel()) {
     }
 
     val savePdf = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
-        uri?.let { viewModel.save(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.save(it)
+        }
     }
 
     LaunchedEffect(uiState.status) {
         when (uiState.status) {
-            ScanStatus.SUCCESS -> snackbarHostState.showSnackbar(successMessage)
+            ScanStatus.SUCCESS -> savedFile.show()
             ScanStatus.ERROR -> snackbarHostState.showSnackbar(errorMessage)
             else -> Unit
         }
@@ -141,5 +150,7 @@ fun ScanScreen(onBack: () -> Unit, viewModel: ScanViewModel = viewModel()) {
                 }
             }
         }
+
+        SavedFileSheetHost(holder = savedFile, onOpenInViewer = onOpenInViewer)
     }
 }

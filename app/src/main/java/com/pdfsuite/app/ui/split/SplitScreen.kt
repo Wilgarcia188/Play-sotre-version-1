@@ -50,29 +50,41 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfsuite.app.R
+import com.pdfsuite.app.ui.common.SavedFileSheetHost
+import com.pdfsuite.app.ui.common.rememberSavedFileHolder
 
 @Composable
-fun SplitScreen(onBack: () -> Unit, viewModel: SplitViewModel = viewModel()) {
+fun SplitScreen(
+    onBack: () -> Unit,
+    onOpenInViewer: (Uri) -> Unit,
+    viewModel: SplitViewModel = viewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val savedFile = rememberSavedFileHolder()
 
     val pickPdf = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let { viewModel.openPdf(it, THUMB_WIDTH_PX) }
     }
     val saveExtracted = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
-        uri?.let { viewModel.extractSelected(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.extractSelected(it)
+        }
     }
     val saveRest = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
-        uri?.let { viewModel.exportRest(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.exportRest(it)
+        }
     }
 
-    val successMessage = stringResource(R.string.split_success)
     val errorMessage = stringResource(R.string.split_error)
     val needOneMessage = stringResource(R.string.split_need_one)
 
     LaunchedEffect(uiState.status) {
         when (uiState.status) {
-            SplitStatus.SUCCESS -> snackbarHostState.showSnackbar(successMessage)
+            SplitStatus.SUCCESS -> savedFile.show()
             SplitStatus.ERROR -> snackbarHostState.showSnackbar(errorMessage)
             SplitStatus.NEED_ONE -> snackbarHostState.showSnackbar(needOneMessage)
             else -> Unit
@@ -161,6 +173,8 @@ fun SplitScreen(onBack: () -> Unit, viewModel: SplitViewModel = viewModel()) {
                 }
             }
         }
+
+        SavedFileSheetHost(holder = savedFile, onOpenInViewer = onOpenInViewer)
     }
 }
 

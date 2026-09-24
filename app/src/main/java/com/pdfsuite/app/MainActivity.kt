@@ -1,5 +1,6 @@
 package com.pdfsuite.app
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,10 +16,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         PDFBoxResourceLoader.init(applicationContext)
         enableEdgeToEdge()
+        val sharedPdf = intent?.takeIf { it.action == Intent.ACTION_VIEW }?.data
         setContent {
             PdfSuiteTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    PdfSuiteApp()
+                    PdfSuiteApp(initialPdfUri = sharedPdf)
                 }
             }
         }

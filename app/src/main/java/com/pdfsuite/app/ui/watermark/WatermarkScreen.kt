@@ -39,27 +39,36 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdfsuite.app.R
 import com.pdfsuite.app.pdf.displayName
+import com.pdfsuite.app.ui.common.SavedFileSheetHost
+import com.pdfsuite.app.ui.common.rememberSavedFileHolder
 
 @Composable
-fun WatermarkScreen(onBack: () -> Unit, viewModel: WatermarkViewModel = viewModel()) {
+fun WatermarkScreen(
+    onBack: () -> Unit,
+    onOpenInViewer: (Uri) -> Unit,
+    viewModel: WatermarkViewModel = viewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val savedFile = rememberSavedFileHolder()
 
     val pickPdf = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let { viewModel.selectFile(it) }
     }
     val savePdf = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
-        uri?.let { viewModel.applyWatermark(it) }
+        uri?.let {
+            savedFile.onDestinationChosen(it)
+            viewModel.applyWatermark(it)
+        }
     }
 
-    val successMessage = stringResource(R.string.watermark_success)
     val errorMessage = stringResource(R.string.watermark_error)
     val needTextMessage = stringResource(R.string.watermark_need_text)
 
     LaunchedEffect(uiState.status) {
         when (uiState.status) {
-            WatermarkStatus.SUCCESS -> snackbarHostState.showSnackbar(successMessage)
+            WatermarkStatus.SUCCESS -> savedFile.show()
             WatermarkStatus.ERROR -> snackbarHostState.showSnackbar(errorMessage)
             WatermarkStatus.NEED_TEXT -> snackbarHostState.showSnackbar(needTextMessage)
             else -> Unit
@@ -146,5 +155,7 @@ fun WatermarkScreen(onBack: () -> Unit, viewModel: WatermarkViewModel = viewMode
                 }
             }
         }
+
+        SavedFileSheetHost(holder = savedFile, onOpenInViewer = onOpenInViewer)
     }
 }
